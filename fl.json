@@ -1,0 +1,5 @@
+{
+	"name": "rest-gs",
+	"db": "todo",
+	"health": "/todo"
+}

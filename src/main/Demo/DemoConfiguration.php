@@ -8,6 +8,7 @@ use Fliglio\Fli\Configuration\DefaultConfiguration;
 
 use Demo\Db\TodoDbm;
 use Demo\Resource\TodoResource;
+use Demo\Resource\KafkaResource;
 use Demo\Weather\Client\WeatherClient;
 
 use GuzzleHttp\Client;
@@ -34,10 +35,20 @@ class DemoConfiguration extends DefaultConfiguration {
 	}
 
 	public function getRoutes() {
-
+		
+		$k = new KafkaResource(
+			$this->getDbm(), 
+			\Kafka\Produce::getInstance(null, null, '172.17.0.1:32781')
+		);
+		
 		$resource = $this->getTodoResource();
 
 		return [
+			RouteBuilder::get()
+				->uri('/kafka/:msg')
+				->resource($k, 'produce')
+				->method(Http::METHOD_GET)
+				->build(),
 			RouteBuilder::get()
 				->uri('/todo')
 				->resource($resource, 'getAll')
